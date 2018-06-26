@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.
@@ -68,5 +68,24 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+      public function store(Request $request)
+    {
+        $request->validate([
+            'id'         => 'required|min:1|max:9|exists:usuario,id',
+            'email'      => 'required|min:8|max:50|email|',
+            'conf-email' => 'required|min:8|max:50|email|same:email',
+            'pass'       => 'required|min:8|',
+            'conf-pass'  => 'required|min:8|same:pass'
+        ]);
+            $registro             = new User;
+            $registro->id         = $request->get('id');
+            $registro->email      = $request->get('email');
+            $registro->contraseña = hash::make($request->get('pass'));
+            $registro->tipo       = 3;
+            $registro->telefono   = "000";
+            $registro->save();
+            return redirect('user.sign');
     }
 }
